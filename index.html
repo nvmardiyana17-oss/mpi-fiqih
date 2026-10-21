@@ -1,0 +1,1340 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>MPI Akidah Islam - MTs Negeri 1 Gorontalo Utara</title>
+    <style>
+        /* CSS RESET & VARIABLES */
+        *, *::before, *::after {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        :root {
+            --primary-dark: #065f46;
+            --primary-main: #047857;
+            --primary-light: #10b981;
+            --primary-soft: #ecfdf5;
+            --gold-main: #d97706;
+            --gold-light: #f59e0b;
+            --gold-soft: #fffbeb;
+            --ocean-teal: #0891b2;
+            --ocean-light: #e0f2fe;
+            --bg-neutral: #f8fafc;
+            --card-bg: #ffffff;
+            --text-main: #0f172a;
+            --text-muted: #475569;
+            --border-color: #e2e8f0;
+            --radius-md: 12px;
+            --radius-lg: 20px;
+            --shadow-sm: 0 2px 4px rgba(0, 0, 0, 0.05);
+            --shadow-md: 0 4px 12px rgba(0, 0, 0, 0.08);
+            --shadow-lg: 0 10px 25px rgba(0, 0, 0, 0.12);
+            --transition: all 0.3s ease;
+        }
+
+        body {
+            font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+            background-color: var(--bg-neutral);
+            color: var(--text-main);
+            line-height: 1.6;
+            display: flex;
+            min-height: 100vh;
+            overflow-x: hidden;
+        }
+
+        /* LAYOUT & SIDEBAR */
+        .app-container {
+            display: flex;
+            width: 100%;
+            min-height: 100vh;
+        }
+
+        .sidebar {
+            width: 280px;
+            background: linear-gradient(180deg, var(--primary-dark) 0%, #022c22 100%);
+            color: #ffffff;
+            padding: 24px 16px;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+            position: fixed;
+            top: 0;
+            bottom: 0;
+            left: 0;
+            z-index: 100;
+            transition: var(--transition);
+        }
+
+        .brand-box {
+            text-align: center;
+            padding-bottom: 20px;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.15);
+            margin-bottom: 20px;
+        }
+
+        .brand-logo {
+            width: 60px;
+            height: 60px;
+            background: var(--gold-light);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 0 auto 12px;
+            box-shadow: 0 0 15px rgba(245, 158, 11, 0.4);
+        }
+
+        .brand-title {
+            font-size: 1.1rem;
+            font-weight: 700;
+            color: #ffffff;
+            line-height: 1.3;
+        }
+
+        .brand-sub {
+            font-size: 0.75rem;
+            color: #a7f3d0;
+            margin-top: 4px;
+        }
+
+        .nav-menu {
+            list-style: none;
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+        }
+
+        .nav-item button {
+            width: 100%;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            padding: 12px 16px;
+            background: transparent;
+            border: none;
+            color: #d1fae5;
+            font-size: 0.95rem;
+            font-weight: 500;
+            border-radius: var(--radius-md);
+            cursor: pointer;
+            transition: var(--transition);
+            text-align: left;
+        }
+
+        .nav-item button:hover {
+            background: rgba(255, 255, 255, 0.1);
+            color: #ffffff;
+        }
+
+        .nav-item.active button {
+            background: var(--gold-main);
+            color: #ffffff;
+            font-weight: 600;
+            box-shadow: var(--shadow-sm);
+        }
+
+        .developer-badge {
+            background: rgba(0, 0, 0, 0.25);
+            padding: 12px;
+            border-radius: var(--radius-md);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            text-align: center;
+            font-size: 0.8rem;
+        }
+
+        .developer-name {
+            font-weight: 700;
+            color: var(--gold-light);
+        }
+
+        /* MAIN CONTENT AREA */
+        .main-content {
+            margin-left: 280px;
+            flex: 1;
+            padding: 32px;
+            max-width: 1200px;
+            transition: var(--transition);
+        }
+
+        /* MOBILE HEADER & TOGGLE */
+        .mobile-header {
+            display: none;
+            position: sticky;
+            top: 0;
+            background: var(--primary-dark);
+            color: white;
+            padding: 12px 20px;
+            z-index: 90;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .mobile-menu-btn {
+            background: transparent;
+            border: none;
+            color: white;
+            cursor: pointer;
+        }
+
+        /* SECTIONS & CARDS */
+        .content-section {
+            display: none;
+            animation: fadeIn 0.4s ease-in-out;
+        }
+
+        .content-section.active {
+            display: block;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .page-header {
+            margin-bottom: 28px;
+            border-bottom: 2px solid var(--border-color);
+            padding-bottom: 16px;
+        }
+
+        .page-title {
+            font-size: 1.8rem;
+            color: var(--primary-dark);
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .page-subtitle {
+            color: var(--text-muted);
+            font-size: 0.95rem;
+            margin-top: 4px;
+        }
+
+        .card {
+            background: var(--card-bg);
+            border-radius: var(--radius-lg);
+            padding: 24px;
+            box-shadow: var(--shadow-md);
+            border: 1px solid var(--border-color);
+            margin-bottom: 24px;
+        }
+
+        .card-header-gold {
+            border-left: 5px solid var(--gold-main);
+        }
+
+        .card-header-teal {
+            border-left: 5px solid var(--ocean-teal);
+        }
+
+        .card-header-green {
+            border-left: 5px solid var(--primary-main);
+        }
+
+        .grid-2 {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 20px;
+        }
+
+        .grid-3 {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+            gap: 20px;
+        }
+
+        /* ARABIC TEXT STYLING */
+        .arabic-block {
+            background: var(--primary-soft);
+            padding: 20px;
+            border-radius: var(--radius-md);
+            border-right: 4px solid var(--primary-main);
+            margin: 16px 0;
+            text-align: right;
+        }
+
+        .arabic-text {
+            font-family: 'Traditional Arabic', 'Amiri', 'Meiryo', serif;
+            font-size: 1.75rem;
+            line-height: 2.2;
+            color: var(--primary-dark);
+            direction: rtl;
+        }
+
+        .latin-text {
+            font-style: italic;
+            color: var(--text-muted);
+            font-size: 0.9rem;
+            margin-top: 8px;
+            text-align: left;
+        }
+
+        .translation-text {
+            color: var(--text-main);
+            font-size: 0.95rem;
+            margin-top: 6px;
+            text-align: left;
+            font-weight: 500;
+        }
+
+        /* INTERACTIVE BUTTONS & BADGES */
+        .btn {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+            padding: 12px 24px;
+            font-size: 0.95rem;
+            font-weight: 600;
+            border-radius: var(--radius-md);
+            border: none;
+            cursor: pointer;
+            transition: var(--transition);
+            text-decoration: none;
+        }
+
+        .btn-primary {
+            background: var(--primary-main);
+            color: white;
+        }
+
+        .btn-primary:hover {
+            background: var(--primary-dark);
+            transform: translateY(-2px);
+        }
+
+        .btn-gold {
+            background: var(--gold-main);
+            color: white;
+        }
+
+        .btn-gold:hover {
+            background: #b45309;
+            transform: translateY(-2px);
+        }
+
+        .btn-outline {
+            background: transparent;
+            border: 2px solid var(--primary-main);
+            color: var(--primary-main);
+        }
+
+        .btn-outline:hover {
+            background: var(--primary-soft);
+        }
+
+        .badge {
+            display: inline-block;
+            padding: 4px 12px;
+            border-radius: 50px;
+            font-size: 0.8rem;
+            font-weight: 600;
+        }
+
+        .badge-green { background: var(--primary-soft); color: var(--primary-dark); }
+        .badge-gold { background: var(--gold-soft); color: var(--gold-main); }
+        .badge-teal { background: var(--ocean-light); color: var(--ocean-teal); }
+
+        /* INTERACTIVE MODULE 2: GOLDEN TRIANGLE */
+        .triangle-container {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 16px;
+            margin: 20px 0;
+        }
+
+        .element-card {
+            width: 100%;
+            padding: 16px;
+            border-radius: var(--radius-md);
+            background: var(--bg-neutral);
+            border: 2px solid var(--border-color);
+            cursor: pointer;
+            transition: var(--transition);
+        }
+
+        .element-card:hover, .element-card.active {
+            border-color: var(--primary-main);
+            background: var(--primary-soft);
+            transform: scale(1.02);
+        }
+
+        .element-card.active {
+            box-shadow: 0 0 0 3px rgba(4, 120, 87, 0.2);
+        }
+
+        /* INTERACTIVE MODULE 3: SIMULATOR & CLASSIFICATION */
+        .simulator-box {
+            background: #f0fdf4;
+            border: 2px dashed var(--primary-main);
+            border-radius: var(--radius-lg);
+            padding: 24px;
+            text-align: center;
+        }
+
+        .slider-control {
+            width: 100%;
+            margin: 20px 0;
+            accent-color: var(--primary-main);
+        }
+
+        canvas#treeCanvas {
+            max-width: 100%;
+            height: auto;
+            background: #ffffff;
+            border-radius: var(--radius-md);
+            box-shadow: var(--shadow-sm);
+        }
+
+        /* CLASSIFICATION GAME */
+        .drag-container {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 10px;
+            margin-bottom: 20px;
+            min-height: 80px;
+            padding: 12px;
+            background: var(--bg-neutral);
+            border-radius: var(--radius-md);
+            border: 1px dashed var(--border-color);
+        }
+
+        .drag-item {
+            background: white;
+            padding: 10px 16px;
+            border-radius: var(--radius-md);
+            border: 1px solid var(--border-color);
+            box-shadow: var(--shadow-sm);
+            cursor: grab;
+            font-size: 0.9rem;
+            font-weight: 500;
+            user-select: none;
+            transition: var(--transition);
+        }
+
+        .drag-item:active {
+            cursor: grabbing;
+            transform: scale(0.95);
+        }
+
+        .drop-zones {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+            gap: 16px;
+        }
+
+        .drop-zone {
+            background: white;
+            border: 2px dashed var(--border-color);
+            border-radius: var(--radius-md);
+            padding: 16px;
+            min-height: 140px;
+            transition: var(--transition);
+        }
+
+        .drop-zone.hover {
+            border-color: var(--primary-main);
+            background: var(--primary-soft);
+        }
+
+        .drop-zone-title {
+            font-weight: 700;
+            margin-bottom: 10px;
+            text-align: center;
+            padding-bottom: 6px;
+            border-bottom: 2px solid var(--border-color);
+        }
+
+        /* QUIZ MODULE */
+        .quiz-option {
+            width: 100%;
+            text-align: left;
+            padding: 14px 18px;
+            margin-bottom: 10px;
+            background: white;
+            border: 2px solid var(--border-color);
+            border-radius: var(--radius-md);
+            font-size: 0.95rem;
+            cursor: pointer;
+            transition: var(--transition);
+        }
+
+        .quiz-option:hover {
+            border-color: var(--primary-light);
+            background: var(--primary-soft);
+        }
+
+        .quiz-option.correct {
+            background: #dcfce7 !important;
+            border-color: #16a34a !important;
+            color: #14532d;
+            font-weight: 600;
+        }
+
+        .quiz-option.wrong {
+            background: #fee2e2 !important;
+            border-color: #dc2626 !important;
+            color: #7f1d1d;
+        }
+
+        .feedback-box {
+            padding: 16px;
+            border-radius: var(--radius-md);
+            margin-top: 16px;
+            display: none;
+            animation: fadeIn 0.3s ease;
+        }
+
+        .feedback-box.show {
+            display: block;
+        }
+
+        /* CERTIFICATE MODAL */
+        .certificate-container {
+            border: 8px double var(--gold-main);
+            padding: 30px;
+            background: #fffdfa;
+            text-align: center;
+            border-radius: var(--radius-md);
+            position: relative;
+            box-shadow: inset 0 0 20px rgba(217, 119, 6, 0.1);
+        }
+
+        .modal-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(0, 0, 0, 0.6);
+            display: none;
+            justify-content: center;
+            align-items: center;
+            z-index: 1000;
+            padding: 20px;
+        }
+
+        .modal-overlay.active {
+            display: flex;
+        }
+
+        .modal-content {
+            background: white;
+            border-radius: var(--radius-lg);
+            max-width: 650px;
+            width: 100%;
+            max-height: 90vh;
+            overflow-y: auto;
+            padding: 24px;
+        }
+
+        /* RESPONSIVE DESIGN */
+        @media (max-width: 768px) {
+            .sidebar {
+                transform: translateX(-100%);
+            }
+            .sidebar.open {
+                transform: translateX(0);
+            }
+            .main-content {
+                margin-left: 0;
+                padding: 16px;
+            }
+            .mobile-header {
+                display: flex;
+            }
+            .page-title {
+                font-size: 1.4rem;
+            }
+        }
+    </style>
+</head>
+<body>
+
+    <!-- MOBILE HEADER -->
+    <div class="mobile-header">
+        <div style="font-weight: 700; font-size: 1rem;">MPI Akidah Islam - MTsN 1 Gorut</div>
+        <button class="mobile-menu-btn" onclick="toggleSidebar()" aria-label="Menu">
+            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <line x1="3" y1="12" x2="21" y2="12"></line>
+                <line x1="3" y1="6" x2="21" y2="6"></line>
+                <line x1="3" y1="18" x2="21" y2="18"></line>
+            </svg>
+        </button>
+    </div>
+
+    <div class="app-container">
+        <!-- SIDEBAR NAVIGATION -->
+        <aside class="sidebar" id="sidebar">
+            <div>
+                <div class="brand-box">
+                    <div class="brand-logo">
+                        <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="#ffffff" stroke-width="2">
+                            <path d="M12 2L2 7l10 5 10-5-10-5zM2 17l10 5 10-5M2 12l10 5 10-5"></path>
+                        </svg>
+                    </div>
+                    <div class="brand-title">AKIDAH ISLAM</div>
+                    <div class="brand-sub">MTs Negeri 1 Gorontalo Utara</div>
+                </div>
+
+                <ul class="nav-menu">
+                    <li class="nav-item active">
+                        <button onclick="switchTab('dashboard')">
+                            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"></path></svg>
+                            Beranda
+                        </button>
+                    </li>
+                    <li class="nav-item">
+                        <button onclick="switchTab('modul1')">
+                            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"></path><path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"></path></svg>
+                            Modul 1: Konsep & Dasar
+                        </button>
+                    </li>
+                    <li class="nav-item">
+                        <button onclick="switchTab('modul2')">
+                            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polygon points="12 2 2 7 12 12 22 7 12 2"></polygon><polyline points="2 17 12 22 22 17"></polyline><polyline points="2 12 12 17 22 12"></polyline></svg>
+                            Modul 2: 3 Unsur Agama
+                        </button>
+                    </li>
+                    <li class="nav-item">
+                        <button onclick="switchTab('modul3')">
+                            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"></circle><polygon points="10 8 16 12 10 16 10 8"></polygon></svg>
+                            Modul 3: Simulasi Interaktif
+                        </button>
+                    </li>
+                    <li class="nav-item">
+                        <button onclick="switchTab('modul4')">
+                            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 11l3 3L22 4"></path><path d="M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11"></path></svg>
+                            Modul 4: Kuis & Evaluasi
+                        </button>
+                    </li>
+                </ul>
+            </div>
+
+            <div class="developer-badge">
+                <div>Pengembang MPI:</div>
+                <div class="developer-name">Novi Mardiyana Haidari, S.Pd</div>
+                <div style="font-size: 0.7rem; color: #a7f3d0; margin-top: 2px;">Guru Akidah Akhlak MTsN 1 Gorut</div>
+            </div>
+        </aside>
+
+        <!-- MAIN CONTENT CONTAINER -->
+        <main class="main-content">
+
+            <!-- SECTION 0: BERANDA / DASHBOARD -->
+            <section id="dashboard" class="content-section active">
+                <div class="page-header">
+                    <span class="badge badge-gold">Kelas VII / Fase D</span>
+                    <h1 class="page-title" style="margin-top: 6px;">Media Pembelajaran Interaktif Akidah Islam</h1>
+                    <p class="page-subtitle">Eksplorasi Modular Landasan Keyakinan dan Keimanan Murid MTs Negeri 1 Gorontalo Utara</p>
+                </div>
+
+                <div class="card card-header-gold">
+                    <h2 style="color: var(--primary-dark); margin-bottom: 10px;">Selamat Datang, Sahabat Remaja Madrasah! 🌊🌴</h2>
+                    <p>Selamat mengeksplorasi media pembelajaran mandiri Akidah Akhlak. Seperti para nelayan di pesisir Gorontalo Utara yang membutuhkan <strong>jangkar kokoh</strong> agar perahu tidak dihanyutkan gelombang laut, kita pun membutuhkan <strong>Akidah Islam yang kuat</strong> agar hidup kita teguh, tenang, dan selamat di dunia maupun akhirat.</p>
+                </div>
+
+                <div class="grid-2">
+                    <div class="card card-header-green">
+                        <h3 style="color: var(--primary-main); margin-bottom: 12px; display: flex; align-items: center; gap: 8px;">
+                            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"></circle><line x1="12" y1="16" x2="12" y2="12"></line><line x1="12" y1="8" x2="12.01" y2="8"></line></svg>
+                            Capaian Pembelajaran (CP)
+                        </h3>
+                        <p style="font-size: 0.95rem; color: var(--text-muted);">
+                            Murid mampu menganalisis dan memahami hakikat Akidah Islam, dasar-dasar hukumnya (Al-Qur'an dan Hadis), tujuan memilikinya, serta mengidentifikasi hubungan harmonis antara tiga unsur utama agama: <strong>Iman, Islam, dan Ihsan</strong> dalam kehidupan sehari-hari.
+                        </p>
+                    </div>
+
+                    <div class="card card-header-teal">
+                        <h3 style="color: var(--ocean-teal); margin-bottom: 12px; display: flex; align-items: center; gap: 8px;">
+                            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="9 11 12 14 22 4"></polyline><path d="M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11"></path></svg>
+                            Tujuan Pembelajaran
+                        </h3>
+                        <ul style="font-size: 0.95rem; color: var(--text-muted); margin-left: 18px;">
+                            <li>Menjelaskan pengertian Akidah secara bahasa & istilah.</li>
+                            <li>Mengidentifikasi dasar hukum Al-Qur'an dan Hadis.</li>
+                            <li>Menganalisis tujuan mempelajari Akidah Islam.</li>
+                            <li>Menghubungkan keterpaduan Iman, Islam, dan Ihsan.</li>
+                        </ul>
+                    </div>
+                </div>
+
+                <div style="text-align: center; margin-top: 20px;">
+                    <button class="btn btn-primary" onclick="switchTab('modul1')">
+                        Mulai Pembelajaran Modul 1
+                        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="5" y1="12" x2="19" y2="12"></line><polyline points="12 5 19 12 12 19"></polyline></svg>
+                    </button>
+                </div>
+            </section>
+
+            <!-- SECTION 1: MODUL 1 (KONSEP & DASAR HUKUM) -->
+            <section id="modul1" class="content-section">
+                <div class="page-header">
+                    <span class="badge badge-green">Modul 1</span>
+                    <h1 class="page-title">Pengertian, Dasar Hukum & Tujuan Akidah Islam</h1>
+                    <p class="page-subtitle">Memahami pondasi paling mendasar dalam keyakinan seorang Muslim</p>
+                </div>
+
+                <!-- Hakikat Akidah -->
+                <div class="card card-header-green">
+                    <h2 style="color: var(--primary-dark); margin-bottom: 12px;">1. Pengertian Akidah Islam</h2>
+                    <div class="grid-2">
+                        <div style="background: var(--primary-soft); padding: 16px; border-radius: var(--radius-md);">
+                            <h4 style="color: var(--primary-dark); margin-bottom: 6px;">Secara Bahasa (Etimologi)</h4>
+                            <p style="font-size: 0.95rem;">
+                                Berasal dari kata bahasa Arab <em>'Aqada - Ya'qidu - 'Aqidatan</em> (عَقَدَ - يَعْقِدُ - عَقِيْدَةً) yang berarti <strong>ikatan, simpul, atau perjanjian yang kokoh</strong>.
+                            </p>
+                        </div>
+                        <div style="background: var(--gold-soft); padding: 16px; border-radius: var(--radius-md);">
+                            <h4 style="color: var(--gold-main); margin-bottom: 6px;">Secara Istilah (Terminologi)</h4>
+                            <p style="font-size: 0.95rem;">
+                                Pokok-pokok kepercayaan atau keyakinan hati yang wajib diimani secara pasti oleh setiap Muslim tanpa ada keraguan sedikit pun di dalamnya.
+                            </p>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Dasar Hukum -->
+                <div class="card card-header-gold">
+                    <h2 style="color: var(--gold-main); margin-bottom: 12px;">2. Dasar Hukum Akidah Islam</h2>
+                    <p>Akidah Islam berlandaskan pada dua sumber utama ajaran Islam yang mutlak:</p>
+
+                    <!-- Dalil Al-Qur'an -->
+                    <div style="margin-top: 16px;">
+                        <span class="badge badge-gold">Dalil Al-Qur'an: QS. An-Nisa [4]: 136</span>
+                        <div class="arabic-block">
+                            <p class="arabic-text">يٰٓاَيُّهَا الَّذِيْنَ اٰمَنُوْٓا اٰمِنُوْا بِاللّٰهِ وَرَسُوْلِهٖ وَالْكِتٰبِ الَّذِيْ نَزَّلَ عَلٰى رَسُوْلِهٖ وَالْكِتٰبِ الَّذِيْٓ اَنْزَلَ مِنْ قَبْلُ</p>
+                            <p class="latin-text">Yā ayyuhallażīna āmanū āminū billāhi wa rasūlihī wal-kitābillażī nazzala 'alā rasūlihī wal-kitābillażī anzala min qabl...</p>
+                            <p class="translation-text">"Wahai orang-orang yang beriman! Tetaplah beriman kepada Allah dan Rasul-Nya (Muhammad) dan kepada Kitab (Al-Qur'an) yang diturunkan kepada Rasul-Nya, serta kitab yang diturunkan sebelumnya..."</p>
+                        </div>
+                    </div>
+
+                    <!-- Dalil Hadis -->
+                    <div style="margin-top: 16px;">
+                        <span class="badge badge-teal">Dalil Hadis Nabi SAW</span>
+                        <div class="arabic-block">
+                            <p class="arabic-text">قَالَ: فَأَخْبِرْنِي عَنِ الإِيْمَانِ، قَالَ: أَنْ تُؤْمِنَ بِاللهِ وَمَلاَئِكَتِهِ وَكُتُبِهِ وَرُسُلِهِ وَالْيَوْمِ الآخِرِ وَتُؤْمِنَ بِالْقَدَرِ خَيْرِهِ وَشَرِّهِ</p>
+                            <p class="translation-text">Rasulullah SAW bersabda: "Iman itu ialah engkau beriman kepada Allah, malaikat-malaikat-Nya, kitab-kitab-Nya, rasul-rasul-Nya, hari akhir, dan engkau beriman kepada takdir yang baik maupun yang buruk." (HR. Muslim)</p>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Tujuan Mempelajari -->
+                <div class="card card-header-teal">
+                    <h2 style="color: var(--ocean-teal); margin-bottom: 12px;">3. Tujuan Mempelajari Akidah Islam</h2>
+                    <div class="grid-3">
+                        <div style="text-align: center; padding: 12px;">
+                            <div style="width: 50px; height: 50px; background: var(--ocean-light); color: var(--ocean-teal); border-radius: 50%; display: flex; align-items: center; justify-content: center; margin: 0 auto 10px; font-weight: 700;">1</div>
+                            <h4 style="margin-bottom: 6px;">Memupuk Keimanan</h4>
+                            <p style="font-size: 0.85rem; color: var(--text-muted);">Memelihara dan mengembangkan keimanan sejak dini agar tidak goyah oleh pengaruh buruk.</p>
+                        </div>
+                        <div style="text-align: center; padding: 12px;">
+                            <div style="width: 50px; height: 50px; background: var(--gold-soft); color: var(--gold-main); border-radius: 50%; display: flex; align-items: center; justify-content: center; margin: 0 auto 10px; font-weight: 700;">2</div>
+                            <h4 style="margin-bottom: 6px;">Mencegah Syirik</h4>
+                            <p style="font-size: 0.85rem; color: var(--text-muted);">Menghindarkan diri dari perbuatan syirik, takhayul, khurafat, dan penyimpangan keyakinan.</p>
+                        </div>
+                        <div style="text-align: center; padding: 12px;">
+                            <div style="width: 50px; height: 50px; background: var(--primary-soft); color: var(--primary-dark); border-radius: 50%; display: flex; align-items: center; justify-content: center; margin: 0 auto 10px; font-weight: 700;">3</div>
+                            <h4 style="margin-bottom: 6px;">Ketenangan Jiwa</h4>
+                            <p style="font-size: 0.85rem; color: var(--text-muted);">Memberikan ketenangan pikiran dan kebahagiaan hidup sejati di bawah ridha Allah SWT.</p>
+                        </div>
+                    </div>
+                </div>
+
+                <div style="display: flex; justify-content: space-between; margin-top: 20px;">
+                    <button class="btn btn-outline" onclick="switchTab('dashboard')">Kembali</button>
+                    <button class="btn btn-primary" onclick="switchTab('modul2')">Lanjut Modul 2</button>
+                </div>
+            </section>
+
+            <!-- SECTION 2: MODUL 2 (3 UNSUR AGAMA) -->
+            <section id="modul2" class="content-section">
+                <div class="page-header">
+                    <span class="badge badge-gold">Modul 2</span>
+                    <h1 class="page-title">3 Unsur Pokok Agama: Iman, Islam, dan Ihsan</h1>
+                    <p class="page-subtitle">Satu Kesatuan "Segitiga Emas" yang Tidak Dapat Dipisahkan</p>
+                </div>
+
+                <div class="card card-header-gold">
+                    <h3 style="color: var(--gold-main); margin-bottom: 10px;">Eksplorasi Segitiga Emas Agama</h3>
+                    <p style="font-size: 0.95rem; margin-bottom: 16px;">Klik setiap unsur kartu di bawah ini untuk melihat analogi dan perannya dalam kehidupan seorang Muslim:</p>
+
+                    <div class="grid-3">
+                        <div class="element-card active" id="card-iman" onclick="selectElement('iman')">
+                            <span class="badge badge-green">Unsur 1</span>
+                            <h3 style="color: var(--primary-dark); margin: 8px 0 4px;">IMAN</h3>
+                            <p style="font-size: 0.85rem; color: var(--text-muted);">Pondasi & Akar Keyakinan Hati</p>
+                        </div>
+                        <div class="element-card" id="card-islam" onclick="selectElement('islam')">
+                            <span class="badge badge-gold">Unsur 2</span>
+                            <h3 style="color: var(--gold-main); margin: 8px 0 4px;">ISLAM</h3>
+                            <p style="font-size: 0.85rem; color: var(--text-muted);">Batang, Ranting & Amal Perbuatan</p>
+                        </div>
+                        <div class="element-card" id="card-ihsan" onclick="selectElement('ihsan')">
+                            <span class="badge badge-teal">Unsur 3</span>
+                            <h3 style="color: var(--ocean-teal); margin: 8px 0 4px;">IHSAN</h3>
+                            <p style="font-size: 0.85rem; color: var(--text-muted);">Buah Manis & Kesadaran Diri</p>
+                        </div>
+                    </div>
+
+                    <!-- DISPLAY DETAIL EKSPLORASI -->
+                    <div id="element-detail" style="margin-top: 20px; padding: 20px; background: var(--primary-soft); border-radius: var(--radius-md); border: 1px solid var(--primary-light);">
+                        <h3 id="detail-title" style="color: var(--primary-dark); margin-bottom: 8px;">IMAN (Pondasi & Akar Keyakinan)</h3>
+                        <p id="detail-desc" style="font-size: 0.95rem; color: var(--text-main);">
+                            Iman adalah pembenaran dalam hati, diucapkan dengan lisan, dan diamalkan dengan anggota badan. Dalam analogi Pohon Keimanan, <strong>Iman ibarat AKAR</strong> yang tertanam jauh di dalam tanah. Jika akarnya kuat, maka pohon kehidupan seorang Muslim di pesisir Gorontalo Utara tidak akan roboh meskipun dihantam angin kencang.
+                        </p>
+                        <div id="detail-analogy" style="margin-top: 12px; font-weight: 600; color: var(--primary-dark);">
+                            🌊 Contoh Kontekstual: Nelayan yang beriman yakin bahwa rezeki ikan di laut adalah pemberian Allah SWT, sehingga ia memulai melaut dengan berdoa dan berserah diri.
+                        </div>
+                    </div>
+                </div>
+
+                <!-- HUBUNGAN HARMONIS -->
+                <div class="card card-header-green">
+                    <h3 style="color: var(--primary-dark); margin-bottom: 10px;">Hubungan Keterpaduan Keduanya</h3>
+                    <p style="font-size: 0.95rem; color: var(--text-muted);">
+                        Iman, Islam, dan Ihsan adalah satu kesatuan utuh. <strong>Iman</strong> tanpa Islam ibarat akar tanpa batang (tidak berbuah). <strong>Islam</strong> tanpa Iman ibarat bangunan tanpa pondasi (mudah roboh). Sedangkan <strong>Ihsan</strong> adalah perhiasan dan kesempurnaan dari keimanan dan peribadatan tersebut.
+                    </p>
+                </div>
+
+                <div style="display: flex; justify-content: space-between; margin-top: 20px;">
+                    <button class="btn btn-outline" onclick="switchTab('modul1')">Kembali</button>
+                    <button class="btn btn-primary" onclick="switchTab('modul3')">Lanjut Modul 3</button>
+                </div>
+            </section>
+
+            <!-- SECTION 3: MODUL 3 (SIMULASI & INTERACTIVE PLAYGROUND) -->
+            <section id="modul3" class="content-section">
+                <div class="page-header">
+                    <span class="badge badge-teal">Modul 3</span>
+                    <h1 class="page-title">Simulasi & Laboratorium Interaktif</h1>
+                    <p class="page-subtitle">Uji pemahaman konseptual melalui visualisasi interaktif dan aktivitas praktik</p>
+                </div>
+
+                <!-- WIDGET 1: SIMULATOR POHON KEIMANAN -->
+                <div class="card card-header-green">
+                    <h3 style="color: var(--primary-dark); margin-bottom: 6px;">Widget 1: Simulasi Pohon Keimanan vs Badai Pesisir Gorut 🌴⛈️</h3>
+                    <p style="font-size: 0.9rem; color: var(--text-muted); margin-bottom: 16px;">
+                        Atur tingkat <strong>Kekuatan Akidah/Akar</strong> dan perhatikan bagaimana pohon merespons <strong>Badai Ujian Hidup</strong>!
+                    </p>
+
+                    <div class="simulator-box">
+                        <canvas id="treeCanvas" width="600" height="300"></canvas>
+                        
+                        <div style="margin-top: 16px; max-width: 500px; margin-left: auto; margin-right: auto;">
+                            <label for="akidahSlider" style="font-weight: 600; font-size: 0.9rem;">
+                                Level Kekuatan Akidah: <span id="akidahVal" style="color: var(--primary-main); font-bold: true;">50%</span>
+                            </label>
+                            <input type="range" id="akidahSlider" min="10" max="100" value="50" class="slider-control" oninput="updateTreeSimulation()">
+
+                            <label for="stormSlider" style="font-weight: 600; font-size: 0.9rem; margin-top: 8px; display: block;">
+                                Intensitas Badai Cobaan Pesisir: <span id="stormVal" style="color: var(--gold-main);">50%</span>
+                            </label>
+                            <input type="range" id="stormSlider" min="0" max="100" value="50" class="slider-control" oninput="updateTreeSimulation()">
+                        </div>
+
+                        <div id="simFeedback" style="margin-top: 12px; font-weight: 600; font-size: 0.95rem; color: var(--primary-dark);">
+                            Pohon bertahan dengan stabil. Akidah cukup seimbang menahan terpaan angin badai.
+                        </div>
+                    </div>
+                </div>
+
+                <!-- WIDGET 2: CLASSIFICATION DRAG & DROP / CLICK MATCH -->
+                <div class="card card-header-teal">
+                    <h3 style="color: var(--ocean-teal); margin-bottom: 6px;">Widget 2: Klasifikasi Perilaku Pesisir Gorontalo Utara 🧩</h3>
+                    <p style="font-size: 0.9rem; color: var(--text-muted); margin-bottom: 16px;">
+                        Klasifikasikan contoh kejadian/perilaku di bawah ini dengan mengkliknya ke dalam kategori <strong>Iman, Islam, atau Ihsan</strong> yang tepat!
+                    </p>
+
+                    <!-- AVAILABLE ITEMS -->
+                    <div class="drag-container" id="itemPool">
+                        <div class="drag-item" data-id="1" data-cat="iman" onclick="assignCategory(this, 'iman')">Meyakini Allah penentu rezeki hasil laut</div>
+                        <div class="drag-item" data-id="2" data-cat="islam" onclick="assignCategory(this, 'islam')">Melaksanakan Shalat Dzuhur berjamaah di Pelabuhan Kwandang</div>
+                        <div class="drag-item" data-id="3" data-cat="ihsan" onclick="assignCategory(this, 'ihsan')">Melepaskan penyu langka kembali ke laut karena merasa diawasi Allah</div>
+                        <div class="drag-item" data-id="4" data-cat="islam" onclick="assignCategory(this, 'islam')">Membayar Zakat Mal dari hasil panen jagung atau perikanan</div>
+                        <div class="drag-item" data-id="5" data-cat="iman" onclick="assignCategory(this, 'iman')">Percaya malaikat mencatat setiap ucapan kita saat berkumpul</div>
+                    </div>
+
+                    <!-- TARGET ZONES -->
+                    <div class="drop-zones">
+                        <div class="drop-zone" id="zone-iman">
+                            <div class="drop-zone-title" style="color: var(--primary-dark);">IMAN (Keyakinan)</div>
+                            <div class="zone-content" id="content-iman"></div>
+                        </div>
+                        <div class="drop-zone" id="zone-islam">
+                            <div class="drop-zone-title" style="color: var(--gold-main);">ISLAM (Amal Ibadah)</div>
+                            <div class="zone-content" id="content-islam"></div>
+                        </div>
+                        <div class="drop-zone" id="zone-ihsan">
+                            <div class="drop-zone-title" style="color: var(--ocean-teal);">IHSAN (Kesadaran Diri)</div>
+                            <div class="zone-content" id="content-ihsan"></div>
+                        </div>
+                    </div>
+
+                    <div style="text-align: center; margin-top: 16px;">
+                        <button class="btn btn-outline" onclick="resetClassification()">Reset Pilihan</button>
+                    </div>
+                </div>
+
+                <div style="display: flex; justify-content: space-between; margin-top: 20px;">
+                    <button class="btn btn-outline" onclick="switchTab('modul2')">Kembali</button>
+                    <button class="btn btn-gold" onclick="switchTab('modul4')">Uji Kemampuan (Kuis Modul 4)</button>
+                </div>
+            </section>
+
+            <!-- SECTION 4: MODUL 4 (KUIS FORMATIF & EVALUASI) -->
+            <section id="modul4" class="content-section">
+                <div class="page-header">
+                    <span class="badge badge-gold">Modul 4</span>
+                    <h1 class="page-title">Evaluasi Kuis Formatif Interaktif</h1>
+                    <p class="page-subtitle">Uji Pemahaman Akidah Islam - MTs Negeri 1 Gorontalo Utara</p>
+                </div>
+
+                <div class="card card-header-gold">
+                    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px;">
+                        <span id="quizProgress" style="font-weight: 700; color: var(--primary-dark);">Soal 1 dari 5</span>
+                        <span id="quizScoreBadge" class="badge badge-gold">Skor Sementara: 0</span>
+                    </div>
+
+                    <!-- QUIZ CONTAINER -->
+                    <div id="quizContainer">
+                        <h3 id="quizQuestion" style="margin-bottom: 16px; color: var(--text-main); font-size: 1.1rem;">
+                            Pertanyaan akan muncul di sini...
+                        </h3>
+
+                        <div id="quizOptions">
+                            <!-- Options injected dynamically -->
+                        </div>
+
+                        <!-- FEEDBACK BOX -->
+                        <div id="feedbackBox" class="feedback-box">
+                            <div id="feedbackTitle" style="font-weight: 700; margin-bottom: 4px;">Umpan Balik</div>
+                            <div id="feedbackText" style="font-size: 0.9rem;">Pembahasan detail akan muncul di sini.</div>
+                        </div>
+                    </div>
+
+                    <div style="display: flex; justify-content: flex-end; margin-top: 20px;">
+                        <button id="nextBtn" class="btn btn-primary" onclick="nextQuestion()" style="display: none;">
+                            Soal Berikutnya
+                            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="5" y1="12" x2="19" y2="12"></line><polyline points="12 5 19 12 12 19"></polyline></svg>
+                        </button>
+                    </div>
+                </div>
+            </section>
+
+        </main>
+    </div>
+
+    <!-- CERTIFICATE MODAL OVERLAY -->
+    <div class="modal-overlay" id="certModal">
+        <div class="modal-content">
+            <div class="certificate-container">
+                <div style="font-size: 0.8rem; color: var(--primary-dark); font-weight: 700; letter-spacing: 2px;">KEMENTERIAN AGAMA REPUBLIK INDONESIA</div>
+                <div style="font-size: 0.75rem; color: var(--text-muted); margin-bottom: 12px;">MTs NEGERI 1 GORONTALO UTARA</div>
+                
+                <h2 style="color: var(--gold-main); font-size: 1.6rem; margin-bottom: 4px;">SURAT KETERANGAN CAPAIAN</h2>
+                <div style="font-size: 0.9rem; color: var(--text-muted);">Media Pembelajaran Interaktif Akidah Islam</div>
+
+                <div style="margin: 20px 0;">
+                    <p style="font-size: 0.9rem;">Diberikan kepada Murid:</p>
+                    <input type="text" id="studentNameInput" placeholder="Masukkan Nama Lengkap Anda..." style="width: 80%; padding: 8px 12px; font-size: 1.1rem; text-align: center; border: 2px solid var(--gold-main); border-radius: var(--radius-md); margin-top: 6px; font-weight: 700; color: var(--primary-dark);">
+                </div>
+
+                <p style="font-size: 0.95rem; color: var(--text-main);">
+                    Telah menyelesaikan seluruh modul eksplorasi dan Evaluasi Formatif Akidah Islam dengan perolehan Nilai Akhir:
+                </p>
+
+                <div style="font-size: 3rem; font-weight: 800; color: var(--primary-main); margin: 10px 0;" id="finalScoreDisplay">
+                    100
+                </div>
+
+                <div style="font-size: 0.85rem; color: var(--text-muted); margin-bottom: 20px;" id="certPredikat">
+                    Predikat: Sangat Baik (Mumtaz)
+                </div>
+
+                <div style="display: flex; justify-content: space-between; align-items: flex-end; margin-top: 30px; border-top: 1px solid var(--border-color); padding-top: 16px;">
+                    <div style="text-align: left; font-size: 0.75rem; color: var(--text-muted);">
+                        Gorontalo Utara, <span id="certDate">21 Oktober 2026</span><br>
+                        Guru Pengampu Akidah Akhlak
+                    </div>
+                    <div style="text-align: right; font-size: 0.8rem; font-weight: 700; color: var(--primary-dark);">
+                        Novi Mardiyana Haidari, S.Pd
+                    </div>
+                </div>
+            </div>
+
+            <div style="display: flex; gap: 10px; justify-content: center; margin-top: 20px;">
+                <button class="btn btn-primary" onclick="window.print()">Cetak / Simpan PDF</button>
+                <button class="btn btn-outline" onclick="closeCertModal()">Tutup & Ulangi</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- JAVASCRIPT LOGIC -->
+    <script>
+        /* 1. NAVIGATION & TAB SWITCHING */
+        function switchTab(tabId) {
+            // Hide all content sections
+            const sections = document.querySelectorAll('.content-section');
+            sections.forEach(sec => sec.classList.remove('active'));
+
+            // Deactivate all sidebar buttons
+            const navItems = document.querySelectorAll('.nav-item');
+            navItems.forEach(item => item.classList.remove('active'));
+
+            // Show selected section
+            const targetSection = document.getElementById(tabId);
+            if(targetSection) targetSection.classList.add('active');
+
+            // Highlight corresponding sidebar button
+            const activeIndex = ['dashboard', 'modul1', 'modul2', 'modul3', 'modul4'].indexOf(tabId);
+            if(activeIndex !== -1 && navItems[activeIndex]) {
+                navItems[activeIndex].classList.add('active');
+            }
+
+            // Close mobile sidebar on navigation
+            document.getElementById('sidebar').classList.remove('open');
+
+            // Trigger canvas redraw if Modul 3 is opened
+            if(tabId === 'modul3') {
+                setTimeout(updateTreeSimulation, 100);
+            }
+
+            // Scroll to top
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+        }
+
+        function toggleSidebar() {
+            const sidebar = document.getElementById('sidebar');
+            sidebar.classList.toggle('open');
+        }
+
+        /* 2. MODUL 2: GOLDEN TRIANGLE SELECTION */
+        const elementData = {
+            iman: {
+                title: "IMAN (Pondasi & Akar Keyakinan)",
+                desc: "Iman adalah pembenaran dalam hati, diucapkan dengan lisan, dan diamalkan dengan anggota badan. Dalam analogi Pohon Keimanan, Iman ibarat AKAR yang tertanam jauh di dalam tanah. Jika akarnya kuat, maka pohon kehidupan seorang Muslim di pesisir Gorontalo Utara tidak akan roboh meskipun dihantam angin kencang.",
+                analogy: "🌊 Contoh Kontekstual: Nelayan di Kwandang yang beriman yakin secara mantap bahwa rezeki hasil laut adalah karunia Allah SWT.",
+                bg: "var(--primary-soft)",
+                border: "var(--primary-light)"
+            },
+            islam: {
+                title: "ISLAM (Batang, Ranting & Amal Perbuatan)",
+                desc: "Islam adalah kepasrahan dan ketundukan nyata kepada aturan Allah melalui pelaksanaan 5 Rukun Islam (Syahadat, Shalat, Zakat, Puasa, Haji). Dalam analogi pohon, Islam adalah BATANG dan RANTING yang teguh berdiri dan terlihat secara kasatmata.",
+                analogy: "🕌 Contoh Kontekstual: Para petani & nelayan menghentikan aktivitasnya sejenak saat azan berkumandang untuk menunaikan Shalat berjamaah.",
+                bg: "var(--gold-soft)",
+                border: "var(--gold-light)"
+            },
+            ihsan: {
+                title: "IHSAN (Buah Manis & Kesadaran Muraqabah)",
+                desc: "Ihsan adalah beribadah kepada Allah seolah-olah engkau melihat-Nya, dan jika engkau tidak melihat-Nya, maka sesungguhnya Dia melihatmu. Ihsan ibarat BUAH yang manis dan rindangnya daun yang memberi manfaat bagi lingkungan sekitar.",
+                analogy: "🌱 Contoh Kontekstual: Menjaga kelestarian terumbu karang dan tidak membuang sampah ke laut Gorontalo Utara karena merasa selalu diawasi Allah.",
+                bg: "var(--ocean-light)",
+                border: "var(--ocean-teal)"
+            }
+        };
+
+        function selectElement(type) {
+            document.querySelectorAll('.element-card').forEach(c => c.classList.remove('active'));
+            document.getElementById(`card-${type}`).classList.add('active');
+
+            const data = elementData[type];
+            const detailBox = document.getElementById('element-detail');
+            
+            document.getElementById('detail-title').innerText = data.title;
+            document.getElementById('detail-desc').innerHTML = data.desc;
+            document.getElementById('detail-analogy').innerText = data.analogy;
+
+            detailBox.style.background = data.bg;
+            detailBox.style.borderColor = data.border;
+        }
+
+        /* 3. MODUL 3: CANVAS TREE SIMULATOR */
+        function updateTreeSimulation() {
+            const canvas = document.getElementById('treeCanvas');
+            if(!canvas) return;
+            const ctx = canvas.getContext('2d');
+
+            const akidahVal = parseInt(document.getElementById('akidahSlider').value);
+            const stormVal = parseInt(document.getElementById('stormSlider').value);
+
+            document.getElementById('akidahVal').innerText = akidahVal + '%';
+            document.getElementById('stormVal').innerText = stormVal + '%';
+
+            // Clear Canvas
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+            // Draw Ground & Sea background
+            ctx.fillStyle = "#e2e8f0";
+            ctx.fillRect(0, 240, canvas.width, 60);
+
+            // Draw Ocean waves context
+            ctx.fillStyle = "#0891b2";
+            ctx.beginPath();
+            ctx.arc(520, 260, 40, 0, Math.PI * 2);
+            ctx.fill();
+
+            // Calculate Tree Bending / Tilt based on storm vs akidah
+            const tilt = (stormVal * 0.4) * (1 - (akidahVal / 150));
+            const isFallen = (stormVal > akidahVal + 30);
+
+            const startX = 250;
+            const startY = 240;
+
+            // 1. Draw Roots (Akidah)
+            ctx.strokeStyle = "#854d0e";
+            ctx.lineWidth = Math.max(2, akidahVal / 12);
+            ctx.beginPath();
+            ctx.moveTo(startX, startY);
+            ctx.lineTo(startX - 30, startY + 35);
+            ctx.moveTo(startX, startY);
+            ctx.lineTo(startX + 30, startY + 35);
+            ctx.moveTo(startX, startY);
+            ctx.lineTo(startX, startY + 45);
+            ctx.stroke();
+
+            // 2. Draw Trunk (Islam)
+            ctx.save();
+            ctx.translate(startX, startY);
+            if(isFallen) {
+                ctx.rotate((80 * Math.PI) / 180);
+            } else {
+                ctx.rotate((tilt * Math.PI) / 180);
+            }
+
+            ctx.strokeStyle = "#047857";
+            ctx.lineWidth = 14;
+            ctx.beginPath();
+            ctx.moveTo(0, 0);
+            ctx.lineTo(0, -100);
+            ctx.stroke();
+
+            // 3. Draw Foliage & Fruits (Ihsan)
+            ctx.fillStyle = isFallen ? "#b45309" : "#10b981";
+            ctx.beginPath();
+            ctx.arc(0, -120, 45, 0, Math.PI * 2);
+            ctx.fill();
+
+            // Draw Coconuts/Fruits
+            if(!isFallen && akidahVal > 40) {
+                ctx.fillStyle = "#f59e0b";
+                ctx.beginPath();
+                ctx.arc(-10, -110, 8, 0, Math.PI * 2);
+                ctx.arc(10, -110, 8, 0, Math.PI * 2);
+                ctx.fill();
+            }
+
+            ctx.restore();
+
+            // Feedback Text Update
+            const feedbackEl = document.getElementById('simFeedback');
+            if(isFallen) {
+                feedbackEl.innerText = "⚠️ POHON TUMBANG! Kekuatan Akidah terlalu lemah untuk menahan Badai Cobaan Pesisir. Perkuat dasar keimanan!";
+                feedbackEl.style.color = "#dc2626";
+            } else if(akidahVal > 70) {
+                feedbackEl.innerText = "🌟 POHON KOKOH BERBUAH LEBAT! Akidah yang sangat kuat membuat keimanan tidak bergeming sedikit pun oleh badai kehidupan.";
+                feedbackEl.style.color = "#047857";
+            } else {
+                feedbackEl.innerText = "🍃 Pohon bertahan dengan lumayan stabil. Tetap tingkatkan pemahaman Akidah Islam agar semakin tangguh!";
+                feedbackEl.style.color = "#d97706";
+            }
+        }
+
+        /* 4. MODUL 3: CLASSIFICATION INTERACTION */
+        function assignCategory(element, targetCategory) {
+            const contentZone = document.getElementById(`content-${targetCategory}`);
+            const itemCat = element.getAttribute('data-cat');
+
+            if(itemCat === targetCategory) {
+                element.style.background = "#dcfce7";
+                element.style.borderColor = "#16a34a";
+                contentZone.appendChild(element);
+            } else {
+                element.style.background = "#fee2e2";
+                element.style.borderColor = "#dc2626";
+                setTimeout(() => {
+                    element.style.background = "white";
+                    element.style.borderColor = "var(--border-color)";
+                }, 1000);
+            }
+        }
+
+        function resetClassification() {
+            const pool = document.getElementById('itemPool');
+            const items = document.querySelectorAll('.drag-item');
+            items.forEach(item => {
+                item.style.background = "white";
+                item.style.borderColor = "var(--border-color)";
+                pool.appendChild(item);
+            });
+        }
+
+        /* 5. MODUL 4: QUIZ DATA & LOGIC */
+        const quizData = [
+            {
+                q: "Secara bahasa (etimologi), kata 'Akidah' berasal dari kata 'Aqada' yang memiliki arti mendasar sebagai...",
+                options: [
+                    "Ikatan atau simpul yang kokoh",
+                    "Sopan santun dan tata krama",
+                    "Ketundukan dan kepasrahan fisik",
+                    "Pertolongan dalam musibah"
+                ],
+                correct: 0,
+                explanation: "Benar! Secara bahasa 'Aqada - Ya'qidu - 'Aqidatan' berarti ikatan atau simpul yang sangat kokoh dan tidak mudah terlepas."
+            },
+            {
+                q: "Di dalam QS. An-Nisa ayat 136, Allah SWT memerintahkan orang-orang yang beriman untuk...",
+                options: [
+                    "Mencari harta sebanyak-banyaknya di laut",
+                    "Tetap beriman kepada Allah, Rasul-Nya, dan Kitab-Nya",
+                    "Berpindah tempat tinggal ke daerah lain",
+                    "Membuat perahu besar untuk melaut"
+                ],
+                correct: 1,
+                explanation: "Tepat! QS. An-Nisa: 136 menegaskan perintah kepada orang-orang beriman agar tetap teguh beriman kepada Allah, Rasul-Nya, Al-Qur'an, dan kitab-kitab sebelumnya."
+            },
+            {
+                q: "Dalam analogi 'Pohon Keimanan' masyarakat pesisir, unsur 'ISLAM' digambarkan sebagai...",
+                options: [
+                    "Akar yang tertanam di bawah tanah",
+                    "Buah manis yang siap dipetik",
+                    "Batang dan ranting yang teguh berdiri",
+                    "Angin kencang yang bertiup dari laut"
+                ],
+                correct: 2,
+                explanation: "Sangat Bagus! Islam merupakan manifestasi lahiriah (penampakan fisik) berupa amalan ibadah (rukun Islam), sehingga dianalogikan sebagai batang dan ranting."
+            },
+            {
+                q: "Seorang nelayan di Kwandang Gorontalo Utara melepaskan kembali seekor penyu langka yang tersangkut di jaringnya karena ia merasa selalu diawasi oleh Allah SWT. Perilaku ini mencerminkan unsur...",
+                options: [
+                    "Iman semata",
+                    "Islam ritual",
+                    "Ihsan (Muraqabah)",
+                    "Takhayul"
+                ],
+                correct: 2,
+                explanation: "Luar Biasa! Kesadaran bahwa Allah SWT selalu melihat perbuatan kita meskipun tidak ada orang lain yang melihat dinamakan sikap IHSAN."
+            },
+            {
+                q: "Berikut ini yang BUKAN merupakan tujuan utama dari mempelajari Akidah Islam adalah...",
+                options: [
+                    "Memupuk dan memelihara keimanan sejak dini",
+                    "Mencegah diri dari perbuatan syirik dan takhayul",
+                    "Memperoleh pujian dari masyarakat sekitar",
+                    "Memberikan ketenangan dan ketenteraman jiwa"
+                ],
+                correct: 2,
+                explanation: "Tepat Sekali! Mencari pujian manusia (Riya) bukanlah tujuan Akidah Islam. Tujuan utamanya adalah ketulusan niat hanya karena Allah SWT."
+            }
+        ];
+
+        let currentQuestion = 0;
+        let score = 0;
+        let answered = false;
+
+        function loadQuestion() {
+            answered = false;
+            const qData = quizData[currentQuestion];
+            document.getElementById('quizProgress').innerText = `Soal ${currentQuestion + 1} dari ${quizData.length}`;
+            document.getElementById('quizQuestion').innerText = qData.q;
+
+            const optionsBox = document.getElementById('quizOptions');
+            optionsBox.innerHTML = '';
+
+            qData.options.forEach((opt, idx) => {
+                const btn = document.createElement('button');
+                btn.className = 'quiz-option';
+                btn.innerText = `${String.fromCharCode(65 + idx)}. ${opt}`;
+                btn.onclick = () => selectQuizAnswer(idx, btn);
+                optionsBox.appendChild(btn);
+            });
+
+            document.getElementById('feedbackBox').className = 'feedback-box';
+            document.getElementById('nextBtn').style.display = 'none';
+        }
+
+        function selectQuizAnswer(selectedIdx, btnElement) {
+            if(answered) return;
+            answered = true;
+
+            const qData = quizData[currentQuestion];
+            const allOptions = document.querySelectorAll('.quiz-option');
+
+            if(selectedIdx === qData.correct) {
+                btnElement.classList.add('correct');
+                score += 20;
+                document.getElementById('quizScoreBadge').innerText = `Skor Sementara: ${score}`;
+                showFeedback(true, qData.explanation);
+            } else {
+                btnElement.classList.add('wrong');
+                allOptions[qData.correct].classList.add('correct');
+                showFeedback(false, qData.explanation);
+            }
+
+            document.getElementById('nextBtn').style.display = 'inline-flex';
+        }
+
+        function showFeedback(isCorrect, explanation) {
+            const fbBox = document.getElementById('feedbackBox');
+            const fbTitle = document.getElementById('feedbackTitle');
+            const fbText = document.getElementById('feedbackText');
+
+            if(isCorrect) {
+                fbBox.style.background = "#dcfce7";
+                fbBox.style.border = "1px solid #16a34a";
+                fbTitle.innerText = "Jawaban Anda Benar! 🎉";
+                fbTitle.style.color = "#14532d";
+            } else {
+                fbBox.style.background = "#fee2e2";
+                fbBox.style.border = "1px solid #dc2626";
+                fbTitle.innerText = "Jawaban Kurang Tepat 💡";
+                fbTitle.style.color = "#7f1d1d";
+            }
+
+            fbText.innerText = explanation;
+            fbBox.classList.add('show');
+        }
+
+        function nextQuestion() {
+            currentQuestion++;
+            if(currentQuestion < quizData.length) {
+                loadQuestion();
+            } else {
+                finishQuiz();
+            }
+        }
+
+        function finishQuiz() {
+            document.getElementById('finalScoreDisplay').innerText = score;
+            
+            let predikat = "Cukup (Maqbul)";
+            if(score >= 80) predikat = "Sangat Baik (Mumtaz) 🎉";
+            else if(score >= 60) predikat = "Baik (Jayyid) 👍";
+            
+            document.getElementById('certPredikat').innerText = `Predikat: ${predikat}`;
+            document.getElementById('certDate').innerText = new Date().toLocaleDateString('id-ID', { day: 'numeric', month: 'long', year: 'numeric' });
+            
+            document.getElementById('certModal').classList.add('active');
+        }
+
+        function closeCertModal() {
+            document.getElementById('certModal').classList.remove('active');
+            currentQuestion = 0;
+            score = 0;
+            document.getElementById('quizScoreBadge').innerText = `Skor Sementara: 0`;
+            loadQuestion();
+        }
+
+        /* INITIALIZATION ON LOAD */
+        window.onload = function() {
+            loadQuestion();
+            updateTreeSimulation();
+        };
+    </script>
+</body>
+</html>
